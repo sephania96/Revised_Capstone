@@ -20,16 +20,17 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-
 schema_view = get_schema_view(
    openapi.Info(
       title="Movie Review API",
       default_version='v1',
-      description="API documentation for Movie Review API",
+      description="API for managing movie reviews and movies",
+      contact=openapi.Contact(email="support@movieapi.com"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
 )
+
 
 
 urlpatterns = [
