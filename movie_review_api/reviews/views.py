@@ -4,7 +4,8 @@ from .models import Movie, Review
 from .serializers import MovieSerializer, ReviewSerializer, UserSerializer
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
