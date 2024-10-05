@@ -3,7 +3,7 @@ from django.urls import path, include
 from . import views
 from rest_framework.routers import DefaultRouter
 from rest_framework.routers import DefaultRouter
-from .views import ReviewViewSet, MovieViewSet
+from .views import ReviewViewSet, MovieViewSet, LoginView
 
 router = DefaultRouter()
 router.register(r'reviews', ReviewViewSet)
@@ -17,6 +17,7 @@ urlpatterns = [
     path('reviews/', views.ReviewListCreateView.as_view(), name='review-list'),
     path('reviews/<int:pk>/', views.ReviewDetailView.as_view(), name='review-detail'),
     path('', include(router.urls)),
+    path('login/', LoginView.as_view(), name='login'),
 ]
 
 urlpatterns += router.urls

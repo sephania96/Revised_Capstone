@@ -3,13 +3,15 @@ from rest_framework import generics
 from .models import Movie, Review
 from .serializers import MovieSerializer, ReviewSerializer, UserSerializer
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 from rest_framework import status
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
-
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -20,6 +22,19 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return []
         return super().get_permissions()
+    
+
+class LoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        
+        if user is not None:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
