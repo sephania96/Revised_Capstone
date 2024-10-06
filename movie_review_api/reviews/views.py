@@ -37,26 +37,24 @@ class LoginView(APIView):
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ReviewViewSet(viewsets.ModelViewSet):
+class ReviewListCreate(generics.ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-
     def perform_create(self, serializer):
-        # Automatically associate the review with the logged-in user
+        # Automatically associate the review with the logged-in user and validate the movie exists
         movie_id = self.request.data.get('movie')  # Get the movie ID from request
         try:
             movie = Movie.objects.get(id=movie_id)
             # Set the user who created the review as the logged-in user
             serializer.save(user=self.request.user, movie=movie)
         except Movie.DoesNotExist:
-            return Response({"error": "Movie does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-        
+            raise Response({"error": "Movie does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+
     @swagger_auto_schema(operation_summary="List all reviews", operation_description="Retrieve all reviews for movies.")
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
 
     @swagger_auto_schema(operation_summary="Create a review", operation_description="Create a new review for a movie.")
     def create(self, request, *args, **kwargs):
@@ -64,39 +62,49 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 
-class PublicViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]  # No authentication needed for this view
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    @swagger_auto_schema(operation_summary="Retrieve a review", operation_description="Retrieve details of a specific review.")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_summary="Update a review", operation_description="Update an existing review.")
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_summary="Delete a review", operation_description="Delete an existing review.")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
-class MovieViewSet(viewsets.ModelViewSet):
+
+class MovieListCreate(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
 
-    @swagger_auto_schema(operation_summary="List all movies", operation_description="Retrieve all available movies.")
+    @swagger_auto_schema(operation_summary="List all movies", operation_description="Retrieve all movies.")
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_auto_schema(operation_summary="Create a movie", operation_description="Create a new movie entry.")
+    @swagger_auto_schema(operation_summary="Create a movie", operation_description="Create a new movie.")
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-
-
-class MovieListCreateView(generics.ListCreateAPIView):
+class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
 
-class MovieDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Movie.objects.all()
-    serializer_class = MovieSerializer
+    @swagger_auto_schema(operation_summary="Retrieve a movie", operation_description="Retrieve details of a specific movie.")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
 
-class ReviewListCreateView(generics.ListCreateAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    @swagger_auto_schema(operation_summary="Update a movie", operation_description="Update an existing movie.")
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
-class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-
-
-
+    @swagger_auto_schema(operation_summary="Delete a movie", operation_description="Delete an existing movie.")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
