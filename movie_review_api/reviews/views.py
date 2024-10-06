@@ -13,6 +13,19 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
+
+
+class SignupView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [AllowAny]  # Allow anyone to register
+    serializer_class = UserSerializer
+
+    @swagger_auto_schema(operation_summary="Signup a new user", operation_description="Register a new user account.")
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response({"message": "User created successfully", "user": response.data}, status=status.HTTP_201_CREATED)
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -32,7 +45,10 @@ class LoginView(APIView):
         
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            return Response({
+                'username': user.username,
+                'token': token.key}, 
+                status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -84,6 +100,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 class MovieListCreate(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     @swagger_auto_schema(operation_summary="List all movies", operation_description="Retrieve all movies.")
     def list(self, request, *args, **kwargs):
@@ -96,6 +113,7 @@ class MovieListCreate(generics.ListCreateAPIView):
 class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     @swagger_auto_schema(operation_summary="Retrieve a movie", operation_description="Retrieve details of a specific movie.")
     def retrieve(self, request, *args, **kwargs):

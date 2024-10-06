@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        # Create the user and set the password properly
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -44,6 +45,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         review = Review.objects.create(movie=movie, **validated_data)
         return review
 
+    def validate_rating(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Rating must be between 1 and 5.")
+        return value
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
