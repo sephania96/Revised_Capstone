@@ -32,8 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    movie_title = serializers.CharField(source='movie.title', read_only=True)  # Display the movie title
-    user = serializers.CharField(source='user.username', read_only=True)  # Display the user name of the person creating the review
+    movie_title = serializers.ReadOnlyField(source='movie.movie_title')  # Display the movie title
+    user = serializers.ReadOnlyField(source='user.username')  # Display the user name of the person creating the review
 
     class Meta:
         model = Review
@@ -53,6 +53,6 @@ class ReviewSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ['id', 'title', 'description', 'release_date']
+        fields = ['id', 'movie_title', 'description', 'release_date']
 
 

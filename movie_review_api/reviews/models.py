@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=100)
+    movie_title = models.CharField(max_length=100)
     description = models.TextField()
     release_date = models.DateField()
 
@@ -24,6 +24,6 @@ class Review(models.Model):
         ordering = ['created_date']
 
     def __str__(self):
-        return f'{self.movie.title} review by {self.user.username}'
+        return f'{self.movie.movie_title} review by {self.user.username}'
 
 

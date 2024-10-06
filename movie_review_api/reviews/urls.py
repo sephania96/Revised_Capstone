@@ -2,8 +2,14 @@
 from django.urls import path, include
 from . import views
 from rest_framework.routers import DefaultRouter
-from rest_framework.routers import DefaultRouter
-from .views import ReviewListCreate, ReviewDetail, MovieListCreate, MovieDetail, SignupView
+from .views import (
+    ReviewListCreate, 
+    ReviewDetail, 
+    MovieListCreate, 
+    MovieDetail, 
+    SignupView,
+    ReviewSearchFilter
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -18,6 +24,8 @@ router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     path('reviews/', ReviewListCreate.as_view(), name='review-list-create'),
+    # path('reviews/by-movie/<str:movie_title>', ReviewSearchFilter.as_view(), name='review-list-by-movie'),
+    path('reviews/search-by-movie-or-rating/', ReviewSearchFilter.as_view(), name='review-search'),
     path('reviews/<int:pk>/', ReviewDetail.as_view(), name='review-detail'),
     path('movies/', MovieListCreate.as_view(), name='movie-list-create'),
     path('movies/<int:pk>/', MovieDetail.as_view(), name='movie-detail'),
