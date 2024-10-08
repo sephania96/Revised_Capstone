@@ -60,6 +60,10 @@ class LoginView(APIView):
 
 ## View to list or create reviews 
 class ReviewListCreate(generics.ListCreateAPIView):
+    """
+    A simple view to fetch all movie reviews within the system.
+    Can also be used to create a new review for a specified movie.
+    """
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
@@ -86,6 +90,9 @@ class ReviewListCreate(generics.ListCreateAPIView):
 
 ## View to fetch details of a particular review
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    A simple view to fetch the details of a specific movie review using the id.
+    """
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
@@ -113,6 +120,9 @@ class ReviewPagination(PageNumberPagination):
 
 ## View to fetch reviews by Movie title 
 class ReviewSearchFilter(generics.ListAPIView):
+    """
+    A simple view to serach movie reviews within the system using either the movie title or rating.
+    """
     serializer_class = ReviewSerializer
     pagination_class = ReviewPagination
 
@@ -161,6 +171,10 @@ class ReviewSearchFilter(generics.ListAPIView):
 
 
 class MovieListCreate(generics.ListCreateAPIView):
+    """
+    A simple view to fetch all movies within the system.
+    Can also be used to create a new movie to be added to the system
+    """
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
